@@ -17,6 +17,7 @@
 #include <math.h>
 #include <matio.h>
 #include <string.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <dirent.h>
 
@@ -4670,10 +4671,17 @@ int osc_plot_ini_read_handler (OscPlot *plot, int line, const char *section,
 			} else if (MATCH_NAME("save_png")) {
 				save_as(plot, value, SAVE_PNG);
 			} else if (MATCH_NAME("cycle")) {
-				unsigned int cycles = atoi(value) / 16;
-				for (i = 0; i < cycles; i++) {
+				struct timespec ts_current, ts_end;
+				unsigned int msecs;
+				unsigned long long nsecs;
+				sscanf(value, "%u", &msecs);
+				clock_gettime(CLOCK_MONOTONIC, &ts_current);
+				nsecs = ts_current.tv_nsec + (msecs * pow(10.0, 6));
+				ts_end.tv_sec = ts_current.tv_sec + (nsecs / pow(10.0, 9));
+				ts_end.tv_nsec = nsecs % (unsigned long long) pow(10.0, 9);
+				while (timespeccmp(&ts_current, &ts_end, >) == 0) {
 					gtk_main_iteration();
-					g_usleep(16);
+					clock_gettime(CLOCK_MONOTONIC, &ts_current);
 				}
 			} else if (MATCH_NAME("save_markers")) {
 				fd = fopen(value, "a");

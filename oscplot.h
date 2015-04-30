@@ -19,6 +19,13 @@ G_BEGIN_DECLS
 #define IS_OSC_PLOT(obj)           (G_TYPE_CHECK_INSTANCE_TYPE((obj), OSC_PLOT_TYPE))
 #define IS_OSC_PLOT_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE((klass), OSC_PLOT_TYPE))
 
+#ifndef timespeccmp
+#define timespeccmp(tsp, usp, cmp)			\
+	(((tsp)->tv_sec == (usp)->tv_sec) ?		\
+		((tsp)->tv_nsec cmp (usp)->tv_nsec) :	\
+		((tsp)->tv_sec cmp (usp)->tv_sec))
+#endif
+
 typedef struct _OscPlot            OscPlot;
 typedef struct _OscPlotPrivate     OscPlotPrivate;
 typedef struct _OscPlotClass       OscPlotClass;

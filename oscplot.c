@@ -4649,22 +4649,22 @@ int osc_plot_ini_read_handler (OscPlot *plot, int line, const char *section,
 			} else if (MATCH_NAME("marker_type")) {
 				if (!strncmp(value, PEAK_MRK, strlen(PEAK_MRK))) {
 					printf("set to peak\n");
-					priv->marker_type = MARKER_PEAK;
+					osc_plot_set_marker_type(plot, MARKER_PEAK);
 				} else if (!strncmp(value, FIX_MRK, strlen(FIX_MRK))) {
 					printf("set to fixed\n");
-					priv->marker_type = MARKER_FIXED;
+					osc_plot_set_marker_type(plot, MARKER_FIXED);
 				} else if (!strncmp(value, SINGLE_MRK, strlen(SINGLE_MRK))) {
 					printf("set to single tone markers\n");
-					priv->marker_type = MARKER_ONE_TONE;
+					osc_plot_set_marker_type(plot, MARKER_ONE_TONE);
 				} else if (!strncmp(value, DUAL_MRK, strlen(DUAL_MRK))) {
 					printf("set to two tone markers\n");
-					priv->marker_type = MARKER_TWO_TONE;
+					osc_plot_set_marker_type(plot, MARKER_TWO_TONE);
 				} else if (!strncmp(value, IMAGE_MRK, strlen(IMAGE_MRK))) {
 					printf("set to image markers\n");
-					priv->marker_type = MARKER_IMAGE;
+					osc_plot_set_marker_type(plot, MARKER_IMAGE);
 				} else {
 					printf("setting all off\n");
-					set_marker_labels(plot, (gchar *)value, MARKER_NULL);
+					osc_plot_set_marker_type(plot, MARKER_OFF);
 					for (i = 0; i <= MAX_MARKERS; i++)
 						priv->markers[i].active = FALSE;
 				}
@@ -4965,7 +4965,7 @@ static void set_marker_labels (OscPlot *plot, gchar *buf, enum marker_types type
 				gtk_databox_graph_set_hide(priv->markers[i].graph, TRUE);
 		}
 		return;
-	} else if (buf && !strcmp(buf, OFF_MRK)) {
+	} else if ((buf && !strcmp(buf, OFF_MRK)) || type == MARKER_OFF) {
 		priv->marker_type = MARKER_OFF;
 		for (i = 0; i <= MAX_MARKERS; i++) {
 			if (priv->markers[i].graph)
